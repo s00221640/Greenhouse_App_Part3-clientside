@@ -1,12 +1,13 @@
 import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-plant-edit',
   standalone: true,
-  imports: [],
-  templateUrl: './plant-edit.component.html',
-  styleUrl: './plant-edit.component.css'
+  imports: [CommonModule],
+  template: `
+    <h2>Plant Edit</h2>
+    <p>plant-edit works!</p>
+  `
 })
-export class PlantEditComponent {
-
-}
+export class PlantEditComponent {}

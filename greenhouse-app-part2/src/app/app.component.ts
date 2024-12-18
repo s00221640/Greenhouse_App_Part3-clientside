@@ -1,13 +1,18 @@
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { RouterModule, RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet],
-  templateUrl: './app.component.html',
-  styleUrl: './app.component.css'
+  imports: [RouterModule, RouterOutlet],
+  template: `
+    <nav>
+      <a routerLink="/">Home</a>
+      <a routerLink="/create">Create Plant</a>
+      <a routerLink="/edit/1">Edit Plant</a>
+    </nav>
+    <router-outlet></router-outlet>
+  `,
+  styleUrls: ['./app.component.css']
 })
-export class AppComponent {
-  title = 'greenhouse-app-part2';
-}
+export class AppComponent {}
