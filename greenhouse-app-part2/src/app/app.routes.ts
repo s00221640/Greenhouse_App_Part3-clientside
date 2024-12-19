@@ -8,3 +8,5 @@ export const routes: Routes = [
   { path: 'create', component: PlantCreateComponent },
   { path: 'edit/:id', component: PlantEditComponent }
 ];
+
+console.log(routes);
