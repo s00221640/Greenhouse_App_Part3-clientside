@@ -1,1 +1,46 @@
-<p>plant-list works!</p>
+<div class="container mt-4">
+    <div class="row">
+      <!-- Left Column: My Plants -->
+      <div class="col-md-6">
+        <h3>My Plants</h3>
+        <ul class="list-group">
+          <li
+            class="list-group-item d-flex justify-content-between align-items-center"
+            *ngFor="let plant of plants"
+          >
+            {{ plant.name }}
+            <div>
+              <button
+                class="btn btn-warning btn-sm me-2"
+                (click)="editPlant(plant._id)"
+              >
+                Edit
+              </button>
+              <button
+                class="btn btn-danger btn-sm"
+                (click)="deletePlant(plant._id)"
+              >
+                Delete
+              </button>
+            </div>
+          </li>
+        </ul>
+      </div>
+  
+      <!-- Right Column: Plant Details -->
+      <div class="col-md-6">
+        <h3>Plant Details</h3>
+        <div *ngIf="selectedPlant">
+          <p><strong>Name:</strong> {{ selectedPlant?.name }}</p>
+          <p><strong>Species:</strong> {{ selectedPlant?.species }}</p>
+          <p><strong>Planting Date:</strong> {{ selectedPlant?.plantingDate }}</p>
+          <p><strong>Watering Frequency:</strong> {{ selectedPlant?.wateringFrequency }}</p>
+          <p><strong>Light Requirement:</strong> {{ selectedPlant?.lightRequirement }}</p>
+        </div>
+        <div *ngIf="!selectedPlant">
+          <p>Select a plant to view details.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  

@@ -1,24 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { PlantService, Plant } from '../../services/plant.service';
 
 @Component({
   selector: 'app-plant-list',
-  standalone: true,
-  imports: [CommonModule],
-  template: `
-    <h2>Plant List</h2>
-    <div *ngIf="errorMessage" class="error">{{ errorMessage }}</div>
-    <ul>
-      <li *ngFor="let plant of plants">
-        {{ plant.name }} - {{ plant.species }} ({{ plant.plantingDate }})
-      </li>
-    </ul>
-  `,
+  templateUrl: './plant-list.component.html',
+  styleUrls: ['./plant-list.component.css'],
 })
 export class PlantListComponent implements OnInit {
   plants: Plant[] = [];
-  errorMessage: string | null = null;
+  selectedPlant: Plant | null = null; // Ensure selectedPlant is initialized as null
 
   constructor(private plantService: PlantService) {}
 
@@ -26,16 +16,36 @@ export class PlantListComponent implements OnInit {
     this.loadPlants();
   }
 
-  loadPlants() {
+  loadPlants(): void {
     this.plantService.getAllPlants().subscribe({
       next: (data) => {
-        console.log('Plants fetched successfully:', data);
         this.plants = data;
       },
       error: (err) => {
         console.error('Error fetching plants:', err);
-        this.errorMessage = 'Failed to load plants. Please try again later.';
       },
     });
+  }
+
+  editPlant(id: string): void {
+    // Navigate to the Edit Plant page
+    console.log('Edit plant with ID:', id);
+    // Redirect logic can go here
+  }
+
+  deletePlant(id: string): void {
+    this.plantService.deletePlant(id).subscribe({
+      next: () => {
+        console.log('Plant deleted:', id);
+        this.loadPlants(); // Refresh the plant list
+      },
+      error: (err) => {
+        console.error('Error deleting plant:', err);
+      },
+    });
+  }
+
+  selectPlant(plant: Plant): void {
+    this.selectedPlant = plant; // Assign the selected plant
   }
 }
