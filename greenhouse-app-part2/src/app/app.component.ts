@@ -1,18 +1,29 @@
 import { Component } from '@angular/core';
-import { RouterModule, RouterOutlet } from '@angular/router';
+import { RouterModule } from '@angular/router';
+import { AuthService } from './components/tempAuthService';
+import { CommonModule } from '@angular/common'; // Import CommonModule for *ngIf
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterModule, RouterOutlet],
+  imports: [RouterModule, CommonModule], // Include CommonModule here
   template: `
     <nav>
-      <a routerLink="/">Home</a>
-      <a routerLink="/create">Create Plant</a>
-      <a routerLink="/edit/1">Edit Plant</a>
+      <a *ngIf="authService.isLoggedIn()" routerLink="/">Home</a>
+      <a *ngIf="authService.isLoggedIn()" routerLink="/create">Create Plant</a>
+      <a *ngIf="authService.isLoggedIn()" routerLink="/edit/1">Edit Plant</a>
+      <a *ngIf="!authService.isLoggedIn()" routerLink="/login">Login</a>
+      <button *ngIf="authService.isLoggedIn()" (click)="logout()">Logout</button>
     </nav>
     <router-outlet></router-outlet>
   `,
-  styleUrls: ['./app.component.css']
 })
-export class AppComponent {}
+export class AppComponent {
+  constructor(public authService: AuthService, private router: Router) {}
+
+  logout(): void {
+    this.authService.clearToken();
+    this.router.navigate(['/login']);
+  }
+}
