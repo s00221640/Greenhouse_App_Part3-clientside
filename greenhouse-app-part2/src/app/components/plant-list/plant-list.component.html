@@ -2,23 +2,25 @@
     <div class="row">
       <!-- Left Column: My Plants -->
       <div class="col-md-6">
-        <h3>My Plants</h3>
-        <input
-          type="text"
-          class="form-control mb-3"
-          placeholder="Search Plants"
-          [(ngModel)]="searchQuery"
-          (input)="filterPlants()"
-        />
+        <h3 class="mb-3">My Plants</h3>
         <ul class="list-group">
           <li
             class="list-group-item d-flex justify-content-between align-items-center"
-            *ngFor="let plant of filteredPlants"
+            *ngFor="let plant of plants"
             (click)="selectPlant(plant)"
           >
             <span>{{ plant.name }}</span>
             <div class="btn-group">
-              <button class="btn btn-sm btn-danger" (click)="deletePlant(plant._id); $event.stopPropagation();">
+              <button
+                class="btn btn-sm btn-warning"
+                (click)="editPlant(plant._id!); $event.stopPropagation();"
+              >
+                Edit
+              </button>
+              <button
+                class="btn btn-sm btn-danger"
+                (click)="deletePlant(plant._id!); $event.stopPropagation();"
+              >
                 Delete
               </button>
             </div>
@@ -28,91 +30,71 @@
   
       <!-- Right Column: Plant Details -->
       <div class="col-md-6">
-        <h3>Plant Details</h3>
-        <div *ngIf="selectedPlant; else noPlantSelected" class="alert alert-info">
-          <div class="card">
-            <div class="card-body">
-              <h5>{{ selectedPlant.name }}</h5>
-              <p><strong>Species:</strong> {{ selectedPlant.species }}</p>
-              <p><strong>Planting Date:</strong> {{ selectedPlant.plantingDate }}</p>
-              <p><strong>Watering Frequency:</strong> {{ selectedPlant.wateringFrequency }}</p>
-              <p><strong>Light Requirement:</strong> {{ selectedPlant.lightRequirement }}</p>
-            </div>
+        <h3 class="mb-3">Plant Details</h3>
+        <div *ngIf="selectedPlant" class="card">
+          <div class="card-body">
+            <h5 class="card-title">{{ selectedPlant?.name }}</h5>
+            <p><strong>Species:</strong> {{ selectedPlant?.species }}</p>
+            <p><strong>Planting Date:</strong> {{ selectedPlant?.plantingDate }}</p>
+            <p><strong>Watering Frequency:</strong> {{ selectedPlant?.wateringFrequency || 'N/A' }}</p>
+            <p><strong>Light Requirement:</strong> {{ selectedPlant?.lightRequirement || 'N/A' }}</p>
           </div>
         </div>
-        <ng-template #noPlantSelected>
-          <div class="alert alert-light">Select a plant to view details.</div>
-        </ng-template>
+        <div *ngIf="!selectedPlant" class="alert alert-info">
+          Select a plant to view details.
+        </div>
       </div>
     </div>
   
-    <!-- Add New Plant Form -->
+    <!-- Plant Creation Form -->
     <div class="row mt-4">
       <div class="col-md-12">
-        <h3>Add a New Plant</h3>
-        <form (ngSubmit)="addPlant()">
-          <div class="form-group mb-2">
-            <label for="plantName">Plant Name</label>
-            <input
-              id="plantName"
-              type="text"
-              [(ngModel)]="newPlant.name"
-              name="name"
-              class="form-control"
-              required
-            />
-          </div>
-          <div class="form-group mb-2">
-            <label for="species">Species</label>
-            <input
-              id="species"
-              type="text"
-              [(ngModel)]="newPlant.species"
-              name="species"
-              class="form-control"
-              required
-            />
-          </div>
-          <div class="form-group mb-2">
-            <label for="plantingDate">Planting Date</label>
-            <input
-              id="plantingDate"
-              type="date"
-              [(ngModel)]="newPlant.plantingDate"
-              name="plantingDate"
-              class="form-control"
-              required
-            />
-          </div>
-          <div class="form-group mb-2">
-            <label for="wateringFrequency">Watering Frequency</label>
-            <select
-              id="wateringFrequency"
-              [(ngModel)]="newPlant.wateringFrequency"
-              name="wateringFrequency"
-              class="form-control"
-              required
-            >
-              <option *ngFor="let freq of wateringFrequencyOptions" [value]="freq">
-                {{ freq }} ({{ freq === 1 ? 'Low' : freq === 5 ? 'High' : 'Moderate' }})
-              </option>
-            </select>
-          </div>
-          <div class="form-group mb-3">
-            <label for="lightRequirement">Light Requirement</label>
-            <select
-              id="lightRequirement"
-              [(ngModel)]="newPlant.lightRequirement"
-              name="lightRequirement"
-              class="form-control"
-              required
-            >
-              <option *ngFor="let light of lightRequirementOptions" [value]="light">
-                {{ light }}
-              </option>
-            </select>
-          </div>
-          <button type="submit" class="btn btn-primary">Add Plant</button>
+        <h3 class="mb-3">Add a New Plant</h3>
+        <form (ngSubmit)="onSubmit()" class="form-inline">
+          <input
+            type="text"
+            class="form-control mb-2 mr-sm-2"
+            placeholder="Plant Name"
+            [(ngModel)]="newPlant.name"
+            name="name"
+            required
+          />
+          <input
+            type="text"
+            class="form-control mb-2 mr-sm-2"
+            placeholder="Species"
+            [(ngModel)]="newPlant.species"
+            name="species"
+            required
+          />
+          <input
+            type="date"
+            class="form-control mb-2 mr-sm-2"
+            [(ngModel)]="newPlant.plantingDate"
+            name="plantingDate"
+            required
+          />
+          <select
+            class="form-control mb-2 mr-sm-2"
+            [(ngModel)]="newPlant.wateringFrequency"
+            name="wateringFrequency"
+            required
+          >
+            <option [value]="1">1 (Low)</option>
+            <option [value]="2">2 (Moderate)</option>
+            <option [value]="3">3 (High)</option>
+          </select>
+          <select
+            class="form-control mb-2 mr-sm-2"
+            [(ngModel)]="newPlant.lightRequirement"
+            name="lightRequirement"
+            required
+          >
+            <option value="Full Sun">Full Sun</option>
+            <option value="Partial Shade">Partial Shade</option>
+            <option value="Low Light">Low Light</option>
+          </select>
+          <button type="submit" class="btn btn-primary mb-2">Add Plant</button>
         </form>
       </div>
     </div>
