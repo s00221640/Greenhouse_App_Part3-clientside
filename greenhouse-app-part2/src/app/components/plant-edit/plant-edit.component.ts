@@ -61,16 +61,24 @@ export class PlantEditComponent implements OnInit {
 
   fetchPlantData(id: string): void {
     this.plantService.getPlantById(id).subscribe({
-      next: (data) => {
-        this.plant = data;
-        this.loading = false;
-      },
-      error: () => {
-        this.errorMessage = 'Failed to load plant data.';
-        this.loading = false;
-      },
+        next: (data) => {
+            this.plant = data;
+            this.loading = false;
+        },
+        error: (err) => {
+            if (err.status === 400) {
+                this.errorMessage = 'Invalid Plant ID. Redirecting to plant list...';
+            } else if (err.status === 404) {
+                this.errorMessage = 'Plant not found. Redirecting to plant list...';
+            } else {
+                this.errorMessage = 'Failed to load plant data. Redirecting to plant list...';
+            }
+            this.loading = false;
+            setTimeout(() => this.router.navigate(['/']), 3000); // Redirect after 3 seconds
+        },
     });
-  }
+}
+
 
   onSubmit(): void {
     if (this.plant._id) {

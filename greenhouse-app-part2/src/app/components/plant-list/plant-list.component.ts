@@ -15,14 +15,6 @@ import { PlantService, Plant } from '../../services/plant.service';
       </li>
     </ul>
   `,
-  styles: [
-    `
-      .error {
-        color: red;
-        font-weight: bold;
-      }
-    `,
-  ],
 })
 export class PlantListComponent implements OnInit {
   plants: Plant[] = [];
@@ -37,11 +29,11 @@ export class PlantListComponent implements OnInit {
   loadPlants() {
     this.plantService.getAllPlants().subscribe({
       next: (data) => {
-        console.log('Plants fetched successfully:', data); // Debug log
+        console.log('Plants fetched successfully:', data);
         this.plants = data;
       },
       error: (err) => {
-        console.error('Error fetching plants:', err); // Debug log
+        console.error('Error fetching plants:', err);
         this.errorMessage = 'Failed to load plants. Please try again later.';
       },
     });
