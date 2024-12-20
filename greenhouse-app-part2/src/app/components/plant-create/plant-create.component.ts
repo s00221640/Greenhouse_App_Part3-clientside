@@ -1,12 +1,15 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-plant-create',
-  standalone: true,
-  imports: [],
-  templateUrl: './plant-create.component.html',
-  styleUrl: './plant-create.component.css'
+  template: '',
+  styleUrls: ['./plant-create.component.css']
 })
-export class PlantCreateComponent {
+export class PlantCreateComponent implements OnInit {
+  constructor(private router: Router) {}
 
+  ngOnInit(): void {
+    this.router.navigate(['/']); // Automatically redirect to the main page
+  }
 }
