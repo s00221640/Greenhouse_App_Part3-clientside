@@ -1,0 +1,31 @@
+.container {
+    max-width: 1200px;
+  }
+  
+  .list-group-item {
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+  }
+  
+  .list-group-item:hover {
+    background-color: #f8f9fa;
+  }
+  
+  .card {
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+  }
+  
+  .card-title {
+    font-size: 1.5rem;
+    margin-bottom: 0.75rem;
+  }
+  
+  .btn-group button {
+    margin-right: 0.5rem;
+  }
+  
+  .alert {
+    font-size: 1.1rem;
+  }
+  

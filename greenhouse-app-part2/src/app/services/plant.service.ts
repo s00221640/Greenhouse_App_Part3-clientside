@@ -8,8 +8,8 @@ export interface Plant {
   name: string;
   species: string;
   plantingDate: string;
-  wateringFrequency?: number; // Added property
-  lightRequirement?: string;  // Added property
+  wateringFrequency?: number; 
+  lightRequirement?: string;  
 }
 
 @Injectable({
