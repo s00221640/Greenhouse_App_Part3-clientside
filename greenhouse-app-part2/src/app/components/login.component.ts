@@ -2,12 +2,12 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms'; // Required for ngModel
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule], // Include FormsModule
+  imports: [CommonModule, FormsModule],
   template: `
     <div class="login-container">
       <h2 *ngIf="isLoginMode">Login</h2>
@@ -103,7 +103,7 @@ import { FormsModule } from '@angular/forms'; // Required for ngModel
   ],
 })
 export class LoginComponent {
-  username: string = ''; // Add username
+  username: string = '';
   email: string = '';
   password: string = '';
   isLoginMode: boolean = true;
@@ -130,7 +130,12 @@ export class LoginComponent {
       next: (response) => {
         if (this.isLoginMode) {
           localStorage.setItem('token', response.token!);
-          this.router.navigate(['/']);
+          console.log('Token stored:', localStorage.getItem('token'));
+
+          // Delay to avoid token read race
+          setTimeout(() => {
+            this.router.navigate(['/']);
+          }, 100);
         } else {
           alert('Signup successful! Please login.');
           this.isLoginMode = true;
