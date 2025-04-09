@@ -3,6 +3,7 @@ import { PlantService, Plant } from '../../services/plant.service';
 import { AuthService } from '../tempAuthService'; 
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-plant-list',
@@ -26,7 +27,11 @@ export class PlantListComponent implements OnInit {
   imageFile: File | null = null;
   imagePreviewUrl: string | null = null;
 
-  constructor(private plantService: PlantService, private authService: AuthService) {}
+  constructor(
+    private plantService: PlantService,
+    private authService: AuthService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     this.loadPlants();
@@ -93,6 +98,7 @@ export class PlantListComponent implements OnInit {
 
   editPlant(id: string): void {
     console.log('Edit plant with ID:', id);
+    this.router.navigate(['/edit', id]);
   }
 
   deletePlant(id: string): void {
