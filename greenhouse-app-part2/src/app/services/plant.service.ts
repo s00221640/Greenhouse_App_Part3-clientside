@@ -23,7 +23,7 @@ export class PlantService {
 
   constructor(private http: HttpClient, private authService: AuthService) {}
 
-  private getAuthHeaders() {
+  private getAuthHeaders(): HttpHeaders {
     const token = localStorage.getItem('token');
     return new HttpHeaders({
       Authorization: `Bearer ${token}`,
@@ -31,7 +31,6 @@ export class PlantService {
   }
 
   getAllPlants(): Observable<Plant[]> {
-    // No need to check userId or modify the URL
     return this.http
       .get<Plant[]>(this.apiUrl, { headers: this.getAuthHeaders() })
       .pipe(
@@ -55,9 +54,21 @@ export class PlantService {
       );
   }
 
-  createPlant(plant: Plant): Observable<Plant> {
+  createPlant(plantData: Plant | FormData): Observable<Plant> {
+    const isFormData = plantData instanceof FormData;
+
+    let headers = new HttpHeaders();
+    const token = localStorage.getItem('token');
+    if (token) {
+      headers = headers.set('Authorization', `Bearer ${token}`);
+    }
+
+    const options = isFormData
+      ? { headers } // Let the browser set Content-Type with FormData boundary
+      : { headers: this.getAuthHeaders() };
+
     return this.http
-      .post<Plant>(this.apiUrl, plant, { headers: this.getAuthHeaders() })
+      .post<Plant>(this.apiUrl, plantData, options)
       .pipe(
         tap((data) => console.log('Plant created:', data)),
         catchError((error) => {

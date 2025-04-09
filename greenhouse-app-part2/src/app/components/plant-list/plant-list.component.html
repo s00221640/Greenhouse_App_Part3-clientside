@@ -1,110 +1,122 @@
 <div class="container mt-4">
-    <!-- Heading -->
-    <h1 class="heading">Welcome To The Greenhouse</h1>
-  
-    <div class="row">
-      <!-- Left Column: My Plants -->
-      <div class="col-md-6">
-        <h3 class="mb-3">My Plants</h3>
-        <ul class="list-group">
-          <li
-            class="list-group-item d-flex justify-content-between align-items-center"
-            *ngFor="let plant of plants"
-            (click)="selectPlant(plant)"
-          >
-            <span>{{ plant.name }}</span>
-            <div class="btn-group">
-              <button
-                class="btn btn-sm btn-warning"
-                (click)="editPlant(plant._id!); $event.stopPropagation();"
-              >
-                Edit
-              </button>
-              <button
-                class="btn btn-sm btn-danger"
-                (click)="deletePlant(plant._id!); $event.stopPropagation();"
-              >
-                Delete
-              </button>
-            </div>
-          </li>
-        </ul>
-      </div>
-  
-      <!-- Right Column: Plant Details -->
-      <div class="col-md-6">
-        <h3 class="mb-3">Plant Details</h3>
-        <div *ngIf="selectedPlant" class="card">
-          <div class="card-body">
-            <h5 class="card-title">{{ selectedPlant?.name }}</h5>
-            <p><strong>Species:</strong> {{ selectedPlant?.species }}</p>
-            <p><strong>Planting Date:</strong> {{ selectedPlant?.plantingDate }}</p>
-            <p><strong>Watering Frequency:</strong>
-              {{ selectedPlant?.wateringFrequency }}
-              <span *ngIf="selectedPlant?.wateringFrequency === 1">- Nearly Never</span>
-              <span *ngIf="selectedPlant?.wateringFrequency === 2">- Weekly</span>
-              <span *ngIf="selectedPlant?.wateringFrequency === 3">- Daily</span>
-            </p>
-            <p><strong>Light Requirement:</strong> {{ selectedPlant?.lightRequirement || 'N/A' }}</p>
+  <!-- Heading -->
+  <h1 class="heading">Welcome To The Greenhouse</h1>
+
+  <div class="row">
+    <!-- Left Column: My Plants -->
+    <div class="col-md-6">
+      <h3 class="mb-3">My Plants</h3>
+      <ul class="list-group">
+        <li
+          class="list-group-item d-flex justify-content-between align-items-center"
+          *ngFor="let plant of plants"
+          (click)="selectPlant(plant)"
+        >
+          <span>{{ plant.name }}</span>
+          <div class="btn-group">
+            <button
+              class="btn btn-sm btn-warning"
+              (click)="editPlant(plant._id!); $event.stopPropagation();"
+            >
+              Edit
+            </button>
+            <button
+              class="btn btn-sm btn-danger"
+              (click)="deletePlant(plant._id!); $event.stopPropagation();"
+            >
+              Delete
+            </button>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Right Column: Plant Details -->
+    <div class="col-md-6">
+      <h3 class="mb-3">Plant Details</h3>
+      <div *ngIf="selectedPlant" class="card">
+        <div class="card-body">
+          <h5 class="card-title">{{ selectedPlant?.name }}</h5>
+          <p><strong>Species:</strong> {{ selectedPlant?.species }}</p>
+          <p><strong>Planting Date:</strong> {{ selectedPlant?.plantingDate }}</p>
+          <p><strong>Watering Frequency:</strong>
+            {{ selectedPlant?.wateringFrequency }}
+            <span *ngIf="selectedPlant?.wateringFrequency === 1">- Nearly Never</span>
+            <span *ngIf="selectedPlant?.wateringFrequency === 2">- Weekly</span>
+            <span *ngIf="selectedPlant?.wateringFrequency === 3">- Daily</span>
+          </p>
+          <p><strong>Light Requirement:</strong> {{ selectedPlant?.lightRequirement || 'N/A' }}</p>
+
+          <div *ngIf="selectedPlant?.imageUrl">
+            <img [src]="selectedPlant.imageUrl" class="img-fluid mt-2" style="max-height: 200px;" />
           </div>
         </div>
-        <div *ngIf="!selectedPlant" class="alert alert-info">
-          Select a plant to view details.
-        </div>
       </div>
-    </div>
-  
-    <!-- Plant Creation Form -->
-    <div class="row mt-4">
-      <div class="col-md-12">
-        <h3 class="mb-3">Add a New Plant</h3>
-        <form (ngSubmit)="onSubmit()" class="form-inline">
-          <input
-            type="text"
-            class="form-control mb-2 mr-sm-2"
-            placeholder="Plant Name"
-            [(ngModel)]="newPlant.name"
-            name="name"
-            required
-          />
-          <input
-            type="text"
-            class="form-control mb-2 mr-sm-2"
-            placeholder="Species"
-            [(ngModel)]="newPlant.species"
-            name="species"
-            required
-          />
-          <input
-            type="date"
-            class="form-control mb-2 mr-sm-2"
-            [(ngModel)]="newPlant.plantingDate"
-            name="plantingDate"
-            required
-          />
-          <select
-            class="form-control mb-2 mr-sm-2"
-            [(ngModel)]="newPlant.wateringFrequency"
-            name="wateringFrequency"
-            required
-          >
-            <option [value]="1">1 (Low - Nearly Never)</option>
-            <option [value]="2">2 (Moderate - Weekly)</option>
-            <option [value]="3">3 (High - Daily)</option>
-          </select>
-          <select
-            class="form-control mb-2 mr-sm-2"
-            [(ngModel)]="newPlant.lightRequirement"
-            name="lightRequirement"
-            required
-          >
-            <option value="Full Sun">Full Sun</option>
-            <option value="Partial Shade">Partial Shade</option>
-            <option value="Low Light">Low Light</option>
-          </select>
-          <button type="submit" class="btn btn-primary mb-2">Add Plant</button>
-        </form>
+      <div *ngIf="!selectedPlant" class="alert alert-info">
+        Select a plant to view details.
       </div>
     </div>
   </div>
-  
+
+  <!-- Plant Creation Form -->
+  <div class="row mt-4">
+    <div class="col-md-12">
+      <h3 class="mb-3">Add a New Plant</h3>
+      <form (ngSubmit)="onSubmit()" class="form-inline" enctype="multipart/form-data">
+        <input
+          type="text"
+          class="form-control mb-2 mr-sm-2"
+          placeholder="Plant Name"
+          [(ngModel)]="newPlant.name"
+          name="name"
+          required
+        />
+        <input
+          type="text"
+          class="form-control mb-2 mr-sm-2"
+          placeholder="Species"
+          [(ngModel)]="newPlant.species"
+          name="species"
+          required
+        />
+        <input
+          type="date"
+          class="form-control mb-2 mr-sm-2"
+          [(ngModel)]="newPlant.plantingDate"
+          name="plantingDate"
+          required
+        />
+        <select
+          class="form-control mb-2 mr-sm-2"
+          [(ngModel)]="newPlant.wateringFrequency"
+          name="wateringFrequency"
+          required
+        >
+          <option [value]="1">1 (Low - Nearly Never)</option>
+          <option [value]="2">2 (Moderate - Weekly)</option>
+          <option [value]="3">3 (High - Daily)</option>
+        </select>
+        <select
+          class="form-control mb-2 mr-sm-2"
+          [(ngModel)]="newPlant.lightRequirement"
+          name="lightRequirement"
+          required
+        >
+          <option value="Full Sun">Full Sun</option>
+          <option value="Partial Shade">Partial Shade</option>
+          <option value="Low Light">Low Light</option>
+        </select>
+
+        <!-- ✅ Image input field -->
+        <input
+          type="file"
+          class="form-control mb-2 mr-sm-2"
+          (change)="onFileChange($event)"
+          accept="image/*"
+        />
+
+        <button type="submit" class="btn btn-primary mb-2">Add Plant</button>
+      </form>
+    </div>
+  </div>
+</div>

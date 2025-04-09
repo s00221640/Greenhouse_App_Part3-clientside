@@ -15,13 +15,15 @@ export class PlantListComponent implements OnInit {
   plants: Plant[] = [];
   selectedPlant: Plant | null = null;
 
-  newPlant: Plant = {
+  newPlant: Partial<Plant> = {
     name: '',
     species: '',
     plantingDate: '',
     wateringFrequency: 1,
     lightRequirement: 'Full Sun',
   };
+
+  imageFile: File | null = null;
 
   constructor(private plantService: PlantService, private authService: AuthService) {}
 
@@ -32,7 +34,7 @@ export class PlantListComponent implements OnInit {
   loadPlants(): void {
     this.plantService.getAllPlants().subscribe({
       next: (data) => {
-        this.plants = data; // Now this will only contain the current user's plants
+        this.plants = data;
         console.log('Loaded plants:', this.plants);
       },
       error: (err) => {
@@ -41,8 +43,33 @@ export class PlantListComponent implements OnInit {
     });
   }
 
+  onFileChange(event: any): void {
+    this.imageFile = event.target.files[0];
+  }
+
   onSubmit(): void {
-    this.plantService.createPlant(this.newPlant).subscribe({
+    const formData = new FormData();
+    formData.append('name', this.newPlant.name || '');
+    formData.append('species', this.newPlant.species || '');
+    formData.append('plantingDate', this.newPlant.plantingDate || '');
+    formData.append('wateringFrequency', String(this.newPlant.wateringFrequency ?? 1)); // safer with ?? instead of ||
+    formData.append('lightRequirement', this.newPlant.lightRequirement || 'Full Sun');
+  
+    const user = this.authService.getUser();
+    if (user?.email) {
+      formData.append('userEmail', user.email);
+    }
+  
+    if (this.imageFile) {
+      formData.append('image', this.imageFile);
+    }
+  
+    // ✅ Log FormData for debugging
+    for (const [key, value] of (formData as any).entries()) {
+      console.log(`${key}:`, value);
+    }
+  
+    this.plantService.createPlant(formData).subscribe({
       next: (data) => {
         console.log('Plant created:', data);
         this.loadPlants();
@@ -53,10 +80,10 @@ export class PlantListComponent implements OnInit {
       },
     });
   }
+  
 
   editPlant(id: string): void {
     console.log('Edit plant with ID:', id);
-    // Redirect to edit plant page or perform inline editing
   }
 
   deletePlant(id: string): void {
@@ -84,5 +111,6 @@ export class PlantListComponent implements OnInit {
       wateringFrequency: 1,
       lightRequirement: 'Full Sun',
     };
+    this.imageFile = null;
   }
 }
