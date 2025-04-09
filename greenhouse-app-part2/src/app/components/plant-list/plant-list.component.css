@@ -97,3 +97,51 @@ body {
     text-shadow: 1px 1px 2px #6c9e73;
   }
   
+  .image-selection-container {
+    border: 1px solid #c8e6c9;
+    border-radius: 8px;
+    padding: 15px;
+    background-color: #f4fbf6;
+  }
+  
+  .image-options {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+  
+  .option {
+    flex: 1;
+  }
+  
+  .option-divider {
+    font-weight: bold;
+    color: #6c9e73;
+  }
+  
+  .option label {
+    display: block;
+    margin-bottom: 5px;
+    color: #2e8b57;
+  }
+  
+  .image-preview {
+    border-top: 1px solid #c8e6c9;
+    padding-top: 10px;
+  }
+  
+  .image-preview p {
+    color: #2e8b57;
+    font-weight: bold;
+  }
+  
+  .btn-outline-success {
+    color: #2e8b57;
+    border-color: #2e8b57;
+    transition: all 0.3s;
+  }
+  
+  .btn-outline-success:hover {
+    background-color: #2e8b57;
+    color: white;
+  }

@@ -4,11 +4,12 @@ import { AuthService } from '../tempAuthService';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { PlantImageGalleryComponent } from '../plant-image-gallery/plant-image-gallery.component';
 
 @Component({
   selector: 'app-plant-list',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, PlantImageGalleryComponent],
   templateUrl: './plant-list.component.html',
   styleUrls: ['./plant-list.component.css'],
 })
@@ -26,6 +27,8 @@ export class PlantListComponent implements OnInit {
 
   imageFile: File | null = null;
   imagePreviewUrl: string | null = null;
+  showImageGallery: boolean = false;
+  selectedGalleryImageUrl: string | null = null;
 
   constructor(
     private plantService: PlantService,
@@ -51,6 +54,7 @@ export class PlantListComponent implements OnInit {
 
   onFileChange(event: any): void {
     this.imageFile = event.target.files[0];
+    this.selectedGalleryImageUrl = null; // Clear gallery selection when uploading a file
 
     if (this.imageFile) {
       const reader = new FileReader();
@@ -63,7 +67,45 @@ export class PlantListComponent implements OnInit {
     }
   }
 
-  onSubmit(): void {
+  toggleImageGallery(): void {
+    this.showImageGallery = !this.showImageGallery;
+  }
+
+  onGalleryImageSelected(imageUrl: string): void {
+    this.selectedGalleryImageUrl = imageUrl;
+    this.imagePreviewUrl = imageUrl;
+    this.imageFile = null; // Clear file upload when gallery image is selected
+    this.showImageGallery = false;
+  }
+
+  closeImageGallery(): void {
+    this.showImageGallery = false;
+  }
+
+  async fetchImageAsFile(url: string): Promise<File | null> {
+    try {
+      // For local assets, we need to use the full URL with origin
+      const fullUrl = window.location.origin + '/' + url;
+      console.log('Fetching image from:', fullUrl);
+      
+      const response = await fetch(fullUrl);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch image: ${response.status} ${response.statusText}`);
+      }
+      
+      const blob = await response.blob();
+      
+      // Extract the filename from the URL path
+      const fileName = url.split('/').pop() || 'plant-image.png';
+      
+      return new File([blob], fileName, { type: 'image/png' });
+    } catch (error) {
+      console.error('Error fetching image as file:', error);
+      return null;
+    }
+  }
+
+  async onSubmit(): Promise<void> {
     const formData = new FormData();
     formData.append('name', this.newPlant.name || '');
     formData.append('species', this.newPlant.species || '');
@@ -76,8 +118,15 @@ export class PlantListComponent implements OnInit {
       formData.append('userEmail', user.email);
     }
 
+    // Handle either file upload or gallery image
     if (this.imageFile) {
       formData.append('image', this.imageFile);
+    } else if (this.selectedGalleryImageUrl) {
+      // If a gallery image was selected, fetch it and convert to a file
+      const imageFile = await this.fetchImageAsFile(this.selectedGalleryImageUrl);
+      if (imageFile) {
+        formData.append('image', imageFile);
+      }
     }
 
     for (const [key, value] of (formData as any).entries()) {
@@ -128,5 +177,7 @@ export class PlantListComponent implements OnInit {
     };
     this.imageFile = null;
     this.imagePreviewUrl = null;
+    this.selectedGalleryImageUrl = null;
+    this.showImageGallery = false;
   }
 }

@@ -78,9 +78,21 @@ export class PlantService {
       );
   }
 
-  updatePlant(id: string, plant: Plant): Observable<Plant> {
+  updatePlant(id: string, plant: Plant | FormData): Observable<Plant> {
+    const isFormData = plant instanceof FormData;
+
+    let headers = new HttpHeaders();
+    const token = localStorage.getItem('token');
+    if (token) {
+      headers = headers.set('Authorization', `Bearer ${token}`);
+    }
+
+    const options = isFormData
+      ? { headers } // Let the browser set Content-Type with FormData boundary
+      : { headers: this.getAuthHeaders() };
+
     return this.http
-      .put<Plant>(`${this.apiUrl}/${id}`, plant, { headers: this.getAuthHeaders() })
+      .put<Plant>(`${this.apiUrl}/${id}`, plant, options)
       .pipe(
         tap(() => console.log('Plant updated successfully')),
         catchError((error) => {

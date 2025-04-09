@@ -4,6 +4,7 @@ import { PlantCreateComponent } from './components/plant-create/plant-create.com
 import { PlantEditComponent } from './components/plant-edit/plant-edit.component';
 import { AppComponent} from './app.component';
 import { LoginComponent } from './components/login.component';
+import { AlmanacComponent } from './components/almanac/almanac.component';
 
 export const routes: Routes = [
   { path: '', component: PlantListComponent },
@@ -11,6 +12,7 @@ export const routes: Routes = [
   { path: 'edit/:id', component: PlantEditComponent },
   { path: '', component: AppComponent },
   { path: 'login', component: LoginComponent },
+  { path: 'almanac', component: AlmanacComponent },
 ];
 
 console.log(routes);

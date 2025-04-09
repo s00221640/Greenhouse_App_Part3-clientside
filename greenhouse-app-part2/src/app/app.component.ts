@@ -12,7 +12,7 @@ import { Router } from '@angular/router';
     <nav style="display: flex; justify-content: center; background-color: #d8f3dc; padding: 10px;">
       <a *ngIf="authService.isLoggedIn()" routerLink="/" style="text-decoration: none; color: #2d6a4f; font-size: 1.2rem; font-weight: bold; margin-right: 20px;">Home</a>
       <a *ngIf="authService.isLoggedIn()" routerLink="/create" style="text-decoration: none; color: #2d6a4f; font-size: 1.2rem; font-weight: bold; margin-right: 20px;">Create Plant</a>
-      <a *ngIf="authService.isLoggedIn()" routerLink="/edit/1" style="text-decoration: none; color: #2d6a4f; font-size: 1.2rem; font-weight: bold; margin-right: 20px;">Edit Plant</a>
+      <a *ngIf="authService.isLoggedIn()" routerLink="/almanac" style="text-decoration: none; color: #2d6a4f; font-size: 1.2rem; font-weight: bold; margin-right: 20px;">Almanac</a>
       <a *ngIf="!authService.isLoggedIn()" routerLink="/login" style="text-decoration: none; color: #2d6a4f; font-size: 1.2rem; font-weight: bold; margin-right: 20px;">Login</a>
       <div *ngIf="currentUser" style="margin-right: 20px; color: #2d6a4f; font-size: 1rem; display: flex; align-items: center;">
         <span>Logged in as: <strong>{{currentUser.email}}</strong></span>

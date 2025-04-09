@@ -103,16 +103,43 @@
           <option value="Low Light">Low Light</option>
         </select>
 
-        <input
-          type="file"
-          class="form-control mb-2 mr-sm-2"
-          (change)="onFileChange($event)"
-          accept="image/*"
-        />
+        <!-- Image Options Section -->
+        <div class="image-selection-container mb-2">
+          <div class="image-options">
+            <div class="option">
+              <label>Upload your own image:</label>
+              <input
+                type="file"
+                class="form-control"
+                (change)="onFileChange($event)"
+                accept="image/*"
+              />
+            </div>
+            
+            <div class="option-divider">OR</div>
+            
+            <div class="option">
+              <button 
+                type="button" 
+                (click)="toggleImageGallery()" 
+                class="btn btn-outline-success"
+              >
+                Choose from Gallery
+              </button>
+            </div>
+          </div>
 
-        <div *ngIf="imagePreviewUrl" class="mb-2">
-          <p class="mb-1">Preview:</p>
-          <img [src]="imagePreviewUrl" class="img-thumbnail" style="max-height: 120px;" />
+          <div *ngIf="showImageGallery">
+            <app-plant-image-gallery
+              (imageSelected)="onGalleryImageSelected($event)"
+              (close)="closeImageGallery()"
+            ></app-plant-image-gallery>
+          </div>
+
+          <div *ngIf="imagePreviewUrl" class="mt-2 image-preview">
+            <p class="mb-1">Preview:</p>
+            <img [src]="imagePreviewUrl" class="img-thumbnail" style="max-height: 120px;" />
+          </div>
         </div>
 
         <button type="submit" class="btn btn-primary mb-2">Add Plant</button>
