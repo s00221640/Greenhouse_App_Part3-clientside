@@ -1,9 +1,7 @@
 <div class="container mt-4">
-  <!-- Heading -->
   <h1 class="heading">Welcome To The Greenhouse</h1>
 
   <div class="row">
-    <!-- Left Column: My Plants -->
     <div class="col-md-6">
       <h3 class="mb-3">My Plants</h3>
       <ul class="list-group">
@@ -31,7 +29,6 @@
       </ul>
     </div>
 
-    <!-- Right Column: Plant Details -->
     <div class="col-md-6">
       <h3 class="mb-3">Plant Details</h3>
       <div *ngIf="selectedPlant" class="card">
@@ -58,7 +55,6 @@
     </div>
   </div>
 
-  <!-- Plant Creation Form -->
   <div class="row mt-4">
     <div class="col-md-12">
       <h3 class="mb-3">Add a New Plant</h3>
@@ -107,13 +103,17 @@
           <option value="Low Light">Low Light</option>
         </select>
 
-        <!-- ✅ Image input field -->
         <input
           type="file"
           class="form-control mb-2 mr-sm-2"
           (change)="onFileChange($event)"
           accept="image/*"
         />
+
+        <div *ngIf="imagePreviewUrl" class="mb-2">
+          <p class="mb-1">Preview:</p>
+          <img [src]="imagePreviewUrl" class="img-thumbnail" style="max-height: 120px;" />
+        </div>
 
         <button type="submit" class="btn btn-primary mb-2">Add Plant</button>
       </form>

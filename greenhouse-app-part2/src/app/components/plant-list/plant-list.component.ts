@@ -24,6 +24,7 @@ export class PlantListComponent implements OnInit {
   };
 
   imageFile: File | null = null;
+  imagePreviewUrl: string | null = null;
 
   constructor(private plantService: PlantService, private authService: AuthService) {}
 
@@ -45,6 +46,16 @@ export class PlantListComponent implements OnInit {
 
   onFileChange(event: any): void {
     this.imageFile = event.target.files[0];
+
+    if (this.imageFile) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.imagePreviewUrl = reader.result as string;
+      };
+      reader.readAsDataURL(this.imageFile);
+    } else {
+      this.imagePreviewUrl = null;
+    }
   }
 
   onSubmit(): void {
@@ -52,23 +63,22 @@ export class PlantListComponent implements OnInit {
     formData.append('name', this.newPlant.name || '');
     formData.append('species', this.newPlant.species || '');
     formData.append('plantingDate', this.newPlant.plantingDate || '');
-    formData.append('wateringFrequency', String(this.newPlant.wateringFrequency ?? 1)); // safer with ?? instead of ||
+    formData.append('wateringFrequency', String(this.newPlant.wateringFrequency ?? 1));
     formData.append('lightRequirement', this.newPlant.lightRequirement || 'Full Sun');
-  
+
     const user = this.authService.getUser();
     if (user?.email) {
       formData.append('userEmail', user.email);
     }
-  
+
     if (this.imageFile) {
       formData.append('image', this.imageFile);
     }
-  
-    // ✅ Log FormData for debugging
+
     for (const [key, value] of (formData as any).entries()) {
       console.log(`${key}:`, value);
     }
-  
+
     this.plantService.createPlant(formData).subscribe({
       next: (data) => {
         console.log('Plant created:', data);
@@ -80,7 +90,6 @@ export class PlantListComponent implements OnInit {
       },
     });
   }
-  
 
   editPlant(id: string): void {
     console.log('Edit plant with ID:', id);
@@ -112,5 +121,6 @@ export class PlantListComponent implements OnInit {
       lightRequirement: 'Full Sun',
     };
     this.imageFile = null;
+    this.imagePreviewUrl = null;
   }
 }
