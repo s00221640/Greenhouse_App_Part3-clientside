@@ -2,14 +2,17 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
+import { AuthService } from '../components/tempAuthService';
 
 export interface Plant {
   _id?: string;
   name: string;
   species: string;
   plantingDate: string;
-  wateringFrequency?: number; 
-  lightRequirement?: string;  
+  wateringFrequency?: number;
+  lightRequirement?: string;
+  imageUrl?: string;
+  userId?: string;
 }
 
 @Injectable({
@@ -18,7 +21,7 @@ export interface Plant {
 export class PlantService {
   private apiUrl = 'http://localhost:3000/plants';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private authService: AuthService) {}
 
   private getAuthHeaders() {
     const token = localStorage.getItem('token');
@@ -28,6 +31,7 @@ export class PlantService {
   }
 
   getAllPlants(): Observable<Plant[]> {
+    // No need to check userId or modify the URL
     return this.http
       .get<Plant[]>(this.apiUrl, { headers: this.getAuthHeaders() })
       .pipe(
@@ -40,11 +44,10 @@ export class PlantService {
   }
 
   getPlantById(id: string): Observable<Plant> {
-    console.log('Fetching plant by ID:', id); // Debugging log
     return this.http
       .get<Plant>(`${this.apiUrl}/${id}`, { headers: this.getAuthHeaders() })
       .pipe(
-        tap((data) => console.log('Received plant data:', data)), // Debugging log
+        tap((data) => console.log('Received plant data:', data)),
         catchError((error) => {
           console.error('Error fetching plant by ID:', error);
           return throwError(() => error);
@@ -65,7 +68,6 @@ export class PlantService {
   }
 
   updatePlant(id: string, plant: Plant): Observable<Plant> {
-    console.log('Updating plant ID:', id, 'with data:', plant);
     return this.http
       .put<Plant>(`${this.apiUrl}/${id}`, plant, { headers: this.getAuthHeaders() })
       .pipe(

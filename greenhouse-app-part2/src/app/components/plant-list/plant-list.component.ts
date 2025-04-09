@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { PlantService, Plant } from '../../services/plant.service';
+import { AuthService } from '../tempAuthService'; 
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -22,7 +23,7 @@ export class PlantListComponent implements OnInit {
     lightRequirement: 'Full Sun',
   };
 
-  constructor(private plantService: PlantService) {}
+  constructor(private plantService: PlantService, private authService: AuthService) {}
 
   ngOnInit(): void {
     this.loadPlants();
@@ -31,7 +32,7 @@ export class PlantListComponent implements OnInit {
   loadPlants(): void {
     this.plantService.getAllPlants().subscribe({
       next: (data) => {
-        this.plants = data;
+        this.plants = data; // Now this will only contain the current user's plants
         console.log('Loaded plants:', this.plants);
       },
       error: (err) => {
