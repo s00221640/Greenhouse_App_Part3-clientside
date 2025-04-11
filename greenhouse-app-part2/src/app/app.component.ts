@@ -11,15 +11,15 @@ import { HttpClient } from '@angular/common/http';
   standalone: true,
   imports: [RouterModule, CommonModule, FormsModule],
   template: `
-    <nav style="display: flex; justify-content: center; background-color: #d8f3dc; padding: 10px;">
-      <a *ngIf="authService.isLoggedIn()" routerLink="/" style="text-decoration: none; color: #2d6a4f; font-size: 1.2rem; font-weight: bold; margin-right: 20px;">Home</a>
-      <a *ngIf="authService.isLoggedIn()" routerLink="/create" style="text-decoration: none; color: #2d6a4f; font-size: 1.2rem; font-weight: bold; margin-right: 20px;">Create Plant</a>
-      <a *ngIf="authService.isLoggedIn()" routerLink="/almanac" style="text-decoration: none; color: #2d6a4f; font-size: 1.2rem; font-weight: bold; margin-right: 20px;">Almanac</a>
+    <nav *ngIf="authService.isLoggedIn()" style="display: flex; justify-content: center; background-color: #d8f3dc; padding: 10px;">
+      <a routerLink="/" style="text-decoration: none; color: #2d6a4f; font-size: 1.2rem; font-weight: bold; margin-right: 20px;">Home</a>
+      <a routerLink="/create" style="text-decoration: none; color: #2d6a4f; font-size: 1.2rem; font-weight: bold; margin-right: 20px;">Create Plant</a>
+      <a routerLink="/almanac" style="text-decoration: none; color: #2d6a4f; font-size: 1.2rem; font-weight: bold; margin-right: 20px;">Almanac</a>
 
       <a *ngIf="isAdmin" routerLink="/admin" style="text-decoration: none; color: #ff6b6b; font-size: 1.2rem; font-weight: bold; margin-right: 20px;">Admin Dashboard</a>
 
       <button 
-        *ngIf="authService.isLoggedIn() && !isAdmin"
+        *ngIf="!isAdmin"
         (click)="showAdminPrompt = true"
         style="margin-right: 20px; background-color: #74c69d; border: none; padding: 5px 10px; color: white; font-size: 1rem; border-radius: 5px;"
       >
@@ -30,7 +30,7 @@ import { HttpClient } from '@angular/common/http';
         <span>Logged in as: <strong>{{ currentUser.email }}</strong></span>
       </div>
 
-      <button *ngIf="authService.isLoggedIn()" (click)="logout()" style="background-color: #95d5b2; border: none; padding: 5px 10px; color: #fff; font-size: 1rem; cursor: pointer; border-radius: 5px;">Logout</button>
+      <button (click)="logout()" style="background-color: #95d5b2; border: none; padding: 5px 10px; color: #fff; font-size: 1rem; cursor: pointer; border-radius: 5px;">Logout</button>
     </nav>
 
     <!-- Admin Code Modal -->
@@ -59,15 +59,32 @@ export class AppComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.loadUserInfo();
+    this.checkAuthStatus();
     this.authService.user$.subscribe(user => {
       this.currentUser = user;
     });
   }
 
+  // Check if the user is logged in, redirect to login if not
+  checkAuthStatus() {
+    const token = localStorage.getItem('token');
+    
+    // Clear invalid tokens
+    if (token === 'null' || token === 'undefined') {
+      localStorage.removeItem('token');
+    }
+    
+    if (!this.authService.isLoggedIn()) {
+      console.log('Not logged in, redirecting to login page');
+      this.router.navigate(['/login']);
+    } else {
+      this.loadUserInfo();
+    }
+  }
+
   loadUserInfo() {
     const token = localStorage.getItem('token');
-    if (token) {
+    if (token && token !== 'null' && token !== 'undefined') {
       try {
         const base64Url = token.split('.')[1];
         const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
@@ -76,10 +93,14 @@ export class AppComponent implements OnInit {
         }).join(''));
         
         this.currentUser = JSON.parse(jsonPayload);
+        console.log('User info loaded:', this.currentUser);
       } catch (e) {
-        console.error('Error parsing token');
+        console.error('Error parsing token', e);
         this.currentUser = null;
+        this.router.navigate(['/login']);
       }
+    } else {
+      this.router.navigate(['/login']);
     }
   }
 
